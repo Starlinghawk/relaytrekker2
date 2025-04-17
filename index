@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>リレトレ山札カウンター</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 8px; /* スマホ向けに余白をさらに削減 */
+            min-height: 100vh; /* 画面全体を使用 */
+            box-sizing: border-box;
+        }
+        .counter {
+            font-size: 15vw; /* 画面幅に応じたフォントサイズ（スマホで大きく） */
+            font-weight: bold;
+            margin: 8px 0; /* 余白をさらに削減 */
+            transition: color 0.3s;
+        }
+        .counter.zero {
+            color: red;
+        }
+        .counter.yellow {
+            color: #ffc107;
+        }
+        .counter.orange {
+            color: #fd7e14;
+        }
+        .progress-bar {
+            width: 90vw; /* 画面幅の90% */
+            max-width: 400px; /* 最大幅を制限 */
+            height: 20px;
+            background-color: #d3d3d3;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 8px 0; /* 余白を削減 */
+        }
+        .progress {
+            height: 100%;
+            background-color: #28a745;
+            width: 100%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+        .progress.yellow {
+            background-color: #ffc107;
+        }
+        .progress.orange {
+            background-color: #fd7e14;
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap; /* ボタンが収まらない場合に折り返す */
+            justify-content: center;
+            gap: 8px;
+            margin: 8px 0; /* 余白を削減 */
+        }
+        button {
+            padding: 12px 20px; /* タッチしやすい大きさに */
+            font-size: 16px; /* スマホで読みやすいサイズ */
+            cursor: pointer;
+            border: none;
+            border-radius: 8px; /* 角を丸く */
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.2s;
+            min-width: 60px; /* ボタンの最小幅 */
+            touch-action: manipulation; /* タッチ操作の精度向上 */
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .reset-button {
+            background-color: #dc3545;
+            margin: 8px 0;
+            padding: 12px 30px; /* リセットボタンを少し大きく */
+        }
+        .reset-button:hover {
+            background-color: #b02a37;
+        }
+        @media (min-width: 600px) {
+            .counter {
+                font-size: 96px; /* 大画面では固定サイズ */
+            }
+            button {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+            .progress-bar {
+                width: 300px; /* 大画面では固定幅 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="counter" id="deckCount">35</div>
+    <div class="progress-bar">
+        <div class="progress" id="progressBar"></div>
+    </div>
+    <div class="buttons">
+        <button onclick="updateCount(1)">+1</button>
+        <button onclick="updateCount(-1)">-1</button>
+        <button onclick="updateCount(-2)">-2</button>
+        <button onclick="updateCount(-3)">-3</button>
+        <button onclick="updateCount(-4)">-4</button>
+    </div>
+    <button class="reset-button" onclick="resetCount()">リセット</button>
+
+    <script>
+        let deckCount = 35;
+        const maxCount = 35;
+        const deckCountElement = document.getElementById('deckCount');
+        const progressBarElement = document.getElementById('progressBar');
+
+        function updateCount(change) {
+            deckCount = Math.max(0, deckCount + change);
+            deckCountElement.textContent = deckCount;
+            updateColors();
+            progressBarElement.style.width = `${(deckCount / maxCount) * 100}%`;
+        }
+
+        function resetCount() {
+            deckCount = 35;
+            deckCountElement.textContent = deckCount;
+            updateColors();
+            progressBarElement.style.width = '100%';
+        }
+
+        function updateColors() {
+            deckCountElement.classList.remove('zero', 'yellow', 'orange');
+            progressBarElement.classList.remove('yellow', 'orange');
+            if (deckCount === 0) {
+                deckCountElement.classList.add('zero');
+            } else if (deckCount <= 3) {
+                deckCountElement.classList.add('orange');
+                progressBarElement.classList.add('orange');
+            } else if (deckCount <= 10) {
+                deckCountElement.classList.add('yellow');
+                progressBarElement.classList.add('yellow');
+            }
+        }
+
+        // 初期表示
+        updateCount(0);
+    </script>
+</body>
+</html>
